@@ -6,12 +6,13 @@ class CharacterSerializer(serializers.ModelSerializer):
         model = Character
         fields = "__all__"
 
-class CombatSessionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CombatSession
-        fields = "__all__"
-
 class CombatParticipantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CombatParticipant
+        model = Character
         fields = "__all__"
+
+class CombatSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Character
+        fields = "__all__"
+
