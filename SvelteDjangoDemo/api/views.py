@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from api.serializers import CharacterSerializer, CombatSessionSerializer
+from api.serializers import CharacterSerializer, CombatSessionSerializer, CombatParticipantSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -53,6 +53,10 @@ class CombatSessionViewSet(ModelViewSet):
 
 
         return Response(response)
+
+class CombatParticipantViewSet(ModelViewSet):
+    queryset = CombatParticipant.objects.all()
+    serializer_class = CombatParticipantSerializer
 
 
 

@@ -8,11 +8,11 @@ class CharacterSerializer(serializers.ModelSerializer):
 
 class CombatParticipantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Character
+        model = CombatParticipant
         fields = "__all__"
 
 class CombatSessionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Character
+        model = CombatSession
         fields = "__all__"
 

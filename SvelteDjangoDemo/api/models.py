@@ -16,7 +16,7 @@ class Character(models.Model):
 class CombatSession(models.Model):
     name = models.CharField(blank=False, null=False)
     combat_index = models.IntegerField(blank=False, null=False)
-    characters = models.ManyToManyField('CombatParticipant', blank=True)
+    characters = models.ManyToManyField('CombatParticipant')
 
     def __str__(self):
         return self.name
