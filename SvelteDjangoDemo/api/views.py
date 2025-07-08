@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from api.serializers import CharacterSerializer, CombatSessionSerializer, CombatParticipantSerializer
+from api.serializers import CharacterSerializer, CombatSessionSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
-from api.models import Character, CombatSession, CombatParticipant
+from api.models import Character, CombatSession
 
 # Create your views here.
 class CharacterViewSet(ModelViewSet):
@@ -29,6 +29,23 @@ class CombatSessionViewSet(ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+
+        characters = Character.objects.filter(combat_session_id=self.kwargs.get('pk'))
+
+        # Add character context for frontend
+        context = {
+            "context": {
+                "characters": CharacterSerializer(characters, many=True).data,
+            }
+        }
+        data.update(context)
+
+        return Response(data)
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data = request.data)
@@ -38,25 +55,15 @@ class CombatSessionViewSet(ModelViewSet):
         except ValidationError as e:
             raise ValidationError(e)
         
-        new_combat_session = self.perform_create(serializer)
+        self.perform_create(serializer)
+        print(serializer.instance)
+        session_id = serializer.instance.id
+        character_ids = request.data.getlist('character_ids') #maybe this should be character_ids = request.body? maybe getAll?
 
-        character_ids = request.data.get('character_ids')
-        new_combat_session.characters.set(character_ids)
+        Character.objects.filter(id__in=character_ids).update(combat_session_id=session_id)
 
-        
+        return Response(serializer.data)
 
-
-        session_name = serializer.get('name') # Assuming I can do this and then pass in a 'name' with my request? I don't quite know
-        combat_index = 0
-        characters = serializer.get('characters')
-
-
-
-        return Response(response)
-
-class CombatParticipantViewSet(ModelViewSet):
-    queryset = CombatParticipant.objects.all()
-    serializer_class = CombatParticipantSerializer
 
 
 
