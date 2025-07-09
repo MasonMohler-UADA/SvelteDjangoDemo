@@ -21,11 +21,27 @@ from api.views import CharacterViewSet, CombatSessionViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-
-router.register(r'characters', CharacterViewSet, basename = "characters")
 router.register(r'combat_sessions', CombatSessionViewSet, basename = "combat_sessions")
+
+characters_list = CharacterViewSet.as_view({
+    'get':'list',
+    'post':'create'
+                                            })
+
+characters_detail = CharacterViewSet.as_view({
+    'get':'retrieve',
+    'put':'update',
+    'patch':'partial_update',
+})
+
+characters_delete = CharacterViewSet.as_view({
+    'delete':'destroy'
+})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('characters/', characters_list),
+    path('characters/<int:pk>/', characters_detail),
+    path('characters/delete', characters_delete),
 ]
