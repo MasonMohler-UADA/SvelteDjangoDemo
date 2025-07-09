@@ -39,14 +39,61 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async ({ url, request }) => {
+	create: async ({ url, request }) => {
 		const data = await request.formData();
+		const character_ids = data.getAll('character_ids');
+		const sessionName = data.get('name');
+
+		if (!sessionName) {
+			return fail(400, { noName: true });
+		}
+		if (!character_ids.length) {
+			return fail(400, { noneSelected: true });
+		}
+
+		let initValidationFail = false;
+		const characters = [];
+
+		for (const id of character_ids) {
+			const initiative = data.get(`initiative-${id}`);
+			if (!initiative) {
+				initValidationFail = true;
+				break;
+			}
+			characters.push({ id, initiative });
+		}
+
+		if (initValidationFail) {
+			return fail(400, { missingInitiative: true });
+		}
+
+		const reqBody = { name: data.get('name'), characters };
+		console.log(reqBody);
 
 		const res = await fetch('http://127.0.0.1:8000/combat_sessions/', {
 			method: 'POST',
-			body: data
+			body: JSON.stringify(reqBody),
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 		const resJSON = await res.json();
 		redirect(307, `/combat-session/${resJSON.id}`);
+	},
+	delete: async ({ request }) => {
+		const data = await request.formData();
+
+		const res = await fetch('http://127.0.0.1:8000/characters/delete', {
+			method: 'DELETE',
+			body: data
+		});
+	},
+	createCharacter: async ({ request }) => {
+		const data = await request.formData();
+
+		const res = await fetch('http://127.0.0.1:8000/characters/', {
+			method: 'POST',
+			body: data
+		});
 	}
 };
