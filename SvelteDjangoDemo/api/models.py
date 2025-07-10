@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -10,6 +11,7 @@ class Character(models.Model):
     player = models.BooleanField(default=False, blank=False, null=False)
     init = models.IntegerField(blank=True, null=True)
     combat_session = models.ForeignKey('CombatSession', on_delete=models.CASCADE, blank=True, null=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     class Meta:
         ordering = ['-init']
@@ -21,6 +23,7 @@ class Character(models.Model):
 class CombatSession(models.Model):
     name = models.CharField(blank=False, null=False)
     combat_index = models.IntegerField(blank=False, null=False, default=0)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     def __str__(self):
         return self.name
