@@ -1,48 +1,28 @@
 import type { EZPOSTRequest } from '$lib/utils/POST';
 import { error, fail, redirect } from '@sveltejs/kit';
 
-export const load = async () => {
-	const options = {
-		method: 'GET'
-	};
+export const load = async ({ cookies }) => {
+	const headers = new Headers();
+	headers.set('Authorization', `Token ${cookies.get('token')}`);
 
-	const endpoint = 'http://127.0.0.1:8000/characters/';
+	const res = await fetch('http://127.0.0.1:8000/characters/', {
+		method: 'GET',
+		headers
+	});
 
-	const req = new Request(endpoint, options);
-
-	const res = await fetch(req)
-		.then(async (res) => {
-			if (res.ok) {
-				const resJSON = await res.json();
-				return {
-					type: 'success' as const,
-					data: resJSON
-				};
-			}
-			return res;
-		})
-		.catch((err: Error) => {
-			return {
-				type: 'error' as const,
-				code: 'unexpected',
-				status: 404,
-				message: 'Unexpected error occurred.',
-				error: err
-			};
-		});
-
-	if (res.type === 'success') {
-		return { pageData: res.data };
-	} else {
-		error(res.status, res.message);
-	}
+	const pageData = await res.json();
+	return { pageData };
 };
 
 export const actions = {
-	create: async ({ url, request }) => {
+	create: async ({ url, request, cookies }) => {
 		const data = await request.formData();
 		const character_ids = data.getAll('character_ids');
 		const sessionName = data.get('name');
+
+		const headers = new Headers();
+		headers.set('Authorization', `Token ${cookies.get('token')}`);
+		headers.set('Content-type', 'application/json; charset=UTF-8');
 
 		if (!sessionName) {
 			return fail(400, { noName: true });
@@ -73,27 +53,35 @@ export const actions = {
 		const res = await fetch('http://127.0.0.1:8000/combat_sessions/', {
 			method: 'POST',
 			body: JSON.stringify(reqBody),
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			headers
 		});
 		const resJSON = await res.json();
 		redirect(307, `/combat-session/${resJSON.id}`);
 	},
-	delete: async ({ request }) => {
+	delete: async ({ request, cookies }) => {
 		const data = await request.formData();
+		const headers = new Headers();
+		headers.set('Authorization', `Token ${cookies.get('token')}`);
 
 		const res = await fetch('http://127.0.0.1:8000/characters/delete', {
 			method: 'DELETE',
-			body: data
+			body: data,
+			headers
 		});
 	},
-	createCharacter: async ({ request }) => {
+	createCharacter: async ({ request, cookies }) => {
 		const data = await request.formData();
+		const obj = Object.fromEntries(data.entries());
+		const JSONdata = JSON.stringify(obj);
+
+		const headers = new Headers();
+		headers.set('Authorization', `Token ${cookies.get('token')}`);
+		headers.set('Content-type', 'application/json; charset=UTF-8');
 
 		const res = await fetch('http://127.0.0.1:8000/characters/', {
 			method: 'POST',
-			body: data
+			body: JSONdata,
+			headers
 		});
 	}
 };

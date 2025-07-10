@@ -3,18 +3,23 @@
 	import { page } from '$app/state';
 	import MainNav from '$lib/components/MainNav/MainNav.svelte';
 	import SimpleSideNav from '$lib/components/SimpleSideNav/SimpleSideNav.svelte';
+	import '$lib/static/css/modern-normalize.css';
 	let { data, children } = $props();
 
 	let sideNavItems = [
 		{ link: '/', label: 'Home' },
 		{ link: '/combat-session', label: 'Combat Sessions' }
 	];
+
+	let username = $derived(data.username);
 </script>
 
 <!-- {#if browser}
 	<SimpleSideNav {sideNavItems} pagePathname={page.url.pathname} />
 {/if} -->
-<MainNav />
+{#if data.loggedIn}
+	<MainNav {username} />
+{/if}
 <main>
 	{@render children()}
 </main>

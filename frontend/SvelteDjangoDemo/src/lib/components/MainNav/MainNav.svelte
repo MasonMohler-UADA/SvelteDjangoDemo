@@ -8,6 +8,8 @@
 			menuOpen = false;
 		}
 	}
+
+	let { username } = $props();
 </script>
 
 <svelte:window on:click={handleClickOutside} />
@@ -20,8 +22,10 @@
 	{/if}
 	{#if menuOpen}
 		<nav transition:slide>
+			<p>Hi, {username}!</p>
 			<a href="/">Home</a>
 			<a href="/combat-session">View Combat Sessions</a>
+			<a data-sveltekit-preload-data="off" href="/accounts/logout">Logout</a>
 		</nav>
 	{/if}
 </div>
@@ -37,13 +41,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		align-items: flex-start;
 	}
 	button:hover {
 		cursor: pointer;
 	}
 	nav {
-		text-align: right;
 		display: flex;
 		flex-direction: column;
 		box-shadow: 0px 0px 1rem #c6c6c6;
