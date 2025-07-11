@@ -10,7 +10,7 @@ class Character(models.Model):
     ac = models.IntegerField(blank=False, null=False)
     player = models.BooleanField(default=False, blank=False, null=False)
     init = models.IntegerField(blank=True, null=True)
-    combat_session = models.ForeignKey('CombatSession', on_delete=models.CASCADE, blank=True, null=True)
+    combat_session = models.ForeignKey('CombatSession', on_delete=models.SET_NULL, blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     class Meta:
