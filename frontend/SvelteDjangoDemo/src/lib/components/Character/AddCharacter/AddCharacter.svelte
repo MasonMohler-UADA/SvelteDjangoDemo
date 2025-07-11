@@ -23,16 +23,16 @@
 <div class="container">
 	{#if !showForm}
 		<button
-			transition:slide={{ easing: cubicOut, duration: 500 }}
+			transition:slide={{ easing: cubicOut, duration: 300 }}
 			class="formOpener"
 			type="button"
-			onclick={toggleForm}>+</button
+			onclick={toggleForm}>+ character</button
 		>
 	{/if}
 	{#if showForm}
 		<form
 			class="addForm"
-			transition:slide={{ easing: cubicOut, duration: 500 }}
+			transition:slide={{ easing: cubicOut, duration: 600 }}
 			method="POST"
 			use:enhance={({}) => {
 				// return async ({ result, update }) => {
@@ -68,17 +68,14 @@
 	form {
 		display: flex;
 		gap: 1rem;
-		justify-self: center;
-		justify-content: center;
 		flex-direction: column;
-		width: 150px;
-		height: 180px;
 		border: none;
 		border-radius: 1rem;
 		padding: 2rem;
 		background-color: #fff;
 		z-index: 1000;
 		box-shadow: 0 0 1rem #c6c6c6;
+		width: 300px;
 	}
 	input {
 		padding: 0.5rem;
@@ -88,7 +85,7 @@
 		border: 3px solid #c6c6c6;
 		transition: 0.3s;
 		font-size: 1rem;
-		width: 60%;
+		width: 100%;
 	}
 
 	input:hover {
@@ -114,18 +111,14 @@
 		align-items: center;
 	}
 	button {
-		width: 214px;
-		height: 244px;
 		border: none;
-		padding: 2rem;
+		padding: 1rem;
 		background-color: brown;
 		color: #fff;
 		border-radius: 1rem;
 		font-family: 'Courier New', Courier, monospace;
-		font-size: 6rem;
+		font-size: 1.6rem;
 		transition: 0.4s;
-		margin-left: 0.12rem;
-		margin-bottom: 0.12rem;
 	}
 	button:hover {
 		cursor: pointer;
@@ -133,7 +126,7 @@
 	}
 	.formButton {
 		width: 100%;
-		font-size: 1rem;
+		font-size: 1.2rem;
 		margin: 0;
 		padding: 0.75rem;
 		border-radius: 0.5rem;

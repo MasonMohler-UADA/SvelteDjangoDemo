@@ -2,6 +2,12 @@ import type { EZPOSTRequest } from '$lib/utils/POST';
 import { error, fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ cookies }) => {
+	const token = cookies.get('token');
+
+	if (!token) {
+		redirect(307, '/accounts/login');
+	}
+
 	const headers = new Headers();
 	headers.set('Authorization', `Token ${cookies.get('token')}`);
 

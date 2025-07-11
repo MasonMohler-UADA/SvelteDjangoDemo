@@ -1,5 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
+	import CombatCharacter from '$lib/components/CombatCharacter/CombatCharacter.svelte';
+	import { fly, slide } from 'svelte/transition';
 
 	let { data } = $props();
 	let characters = data.pageData.context.characters;
@@ -23,42 +25,44 @@
 </script>
 
 <div class="container">
-	<form method="POST" use:enhance>
+	<form method="POST" action="?/next" use:enhance>
 		<input name="combat_index" value={combatIndex} hidden readonly type="text" />
 		<button onclick={nextHandler} class="next">Next</button>
 	</form>
 
 	<h2>Up Now:</h2>
-	<h2>{currentCombatant.name}</h2>
-	<p>Current HP: {currentCombatant.current_HP}</p>
-	<p>Max HP: {currentCombatant.max_HP}</p>
-	<p>Initiative: {currentCombatant.init}</p>
-	<p>AC: {currentCombatant.ac}</p>
+	<CombatCharacter {...currentCombatant} />
 
 	<h2>Up Next:</h2>
-	<h2>{upNext.name}</h2>
-	<p>Current HP: {upNext.current_HP}</p>
-	<p>Max HP: {upNext.max_HP}</p>
-	<p>Initiative: {upNext.init}</p>
-	<p>AC: {upNext.ac}</p>
+	<CombatCharacter {...upNext} />
 
 	<h2>All:</h2>
-	{#each characters as { name, current_HP, max_HP, init, ac }}
-		<h2>{name}</h2>
-		<p>Current HP: {current_HP}</p>
-		<p>Max HP: {max_HP}</p>
-		<p>Initiative: {init}</p>
-		<p>AC: {ac}</p>
+	{#each characters as { id, name, current_HP, max_HP, init, ac }}
+		<CombatCharacter {id} {name} {current_HP} {max_HP} {init} {ac} />
 	{/each}
 </div>
 
 <style>
+	button {
+		text-align: center;
+	}
 	.container {
 		max-width: 768px;
 		margin: 40px auto;
 	}
 	.next {
-		font-size: 2rem;
 		float: right;
+		background-color: brown;
+		color: #fff;
+		border: none;
+		border-radius: 1rem;
+		padding: 0.5rem 1rem;
+		transition: 0.4s;
+		transform: translate(0, -1rem);
+		font-size: 1.6rem;
+	}
+	.next:hover {
+		cursor: pointer;
+		background-color: rgb(120, 30, 30);
 	}
 </style>

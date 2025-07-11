@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import AddCharacter from '$lib/components/Character/AddCharacter/AddCharacter.svelte';
 	import Character from '$lib/components/Character/Character.svelte';
+	import { fade } from 'svelte/transition';
 
 	let { data, form } = $props();
 
@@ -40,21 +41,27 @@
 		{/each}
 		<br />
 	</fieldset>
-	<label for="name">Enter Session Name: <input required name="name" id="name" type="text" /></label>
-	<br />
-	<button class="create">Create Combat Session</button>
+	{#if selectedIDs.length > 0}
+		<label transition:fade for="name"
+			>Enter Session Name: <input required name="name" id="name" type="text" /></label
+		>
+		<br />
+		<button transition:fade class="create">Create Combat Session</button>
+	{/if}
 </form>
-<form action="?/delete" use:enhance method="POST">
-	{#each selectedIDs as id}
-		<input name="character_ids" hidden readonly value={id} type="text" />
-	{/each}
-	<button class="delete">Delete Selected Characters</button>
-</form>
+
+{#if selectedIDs.length > 0}<form action="?/delete" use:enhance method="POST">
+		{#each selectedIDs as id}
+			<input name="character_ids" hidden readonly value={id} type="text" />
+		{/each}
+		<button transition:fade class="delete">Delete Selected Characters</button>
+	</form>{/if}
 <AddCharacter />
 
 <style>
 	form {
 		max-width: 100%;
+		margin-top: 2rem;
 	}
 	fieldset {
 		display: flex;
@@ -62,7 +69,18 @@
 		flex-wrap: wrap;
 		gap: 1rem;
 	}
+	button {
+		background-color: brown;
+		color: #fff;
+		padding: 1rem;
+		border: none;
+		border-radius: 1rem;
+		font-size: 1.4rem;
+		transition: 0.4s;
+		margin-bottom: 1rem;
+	}
 	button:hover {
 		cursor: pointer;
+		background-color: rgb(120, 30, 30);
 	}
 </style>

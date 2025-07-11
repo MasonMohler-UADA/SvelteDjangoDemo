@@ -1,4 +1,4 @@
-import { redirect } from "@sveltejs/kit";
+import { redirect } from '@sveltejs/kit';
 
 export const actions = {
 	default: async ({ url, request, params }) => {
@@ -9,8 +9,8 @@ export const actions = {
 			body: data
 		});
 
-        if (res.ok) {
-            redirect(307, '/accounts/login');
-        }
+		if (res.ok) {
+			redirect(307, '/accounts/login');
+		}
 	}
 };

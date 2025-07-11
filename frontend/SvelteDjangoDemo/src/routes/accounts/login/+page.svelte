@@ -14,6 +14,7 @@
 		<label>Password: <input required name="password" type="text" /></label>
 		<button>Submit</button>
 	</form>
+	<a href="/accounts/register">Need an account?</a>
 </div>
 
 <style>
