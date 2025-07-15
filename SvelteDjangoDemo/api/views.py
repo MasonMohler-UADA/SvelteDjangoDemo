@@ -1,12 +1,15 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import render
 from knox.auth import TokenAuthentication
 from knox.models import AuthToken
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from api.serializers import CharacterSerializer, CombatSessionSerializer, RegisterSerializer, LoginSerializer
+from api.serializers import CharacterSerializer, CombatSessionSerializer, RegisterSerializer, LoginSerializer, \
+    UsernameSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -147,6 +150,25 @@ class CombatSessionViewSet(ModelViewSet):
             print(e)
             combat_session.delete()
         return Response(serializer.data)
+
+
+class UsernameCheckView(GenericAPIView):
+    serializer_class = UsernameSerializer
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            if 'blank' in e.get_codes()['username']:
+                return Response({'value': False, 'detail': e.detail})
+            else:
+                return Response({'value': True, 'detail': e.detail})
+        return Response({'value': False})
+
+
+
 
 
 

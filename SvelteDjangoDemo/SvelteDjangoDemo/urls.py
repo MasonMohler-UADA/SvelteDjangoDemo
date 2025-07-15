@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from api.views import CharacterViewSet, CombatSessionViewSet, RegisterAPI
+from api.views import CharacterViewSet, CombatSessionViewSet, RegisterAPI, UsernameCheckView
 from rest_framework.routers import DefaultRouter
 
 from knox import views as knox_views
@@ -50,4 +50,5 @@ urlpatterns = [
     path('characters/', characters_list),
     path('characters/<int:pk>/', characters_detail),
     path('characters/delete', characters_delete),
+    path('users/username-check/', UsernameCheckView.as_view(), name='username_check' ),
 ]
