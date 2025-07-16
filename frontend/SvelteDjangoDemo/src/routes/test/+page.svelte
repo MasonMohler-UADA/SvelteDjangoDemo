@@ -1,101 +1,130 @@
 <script lang="ts">
-	import { superForm } from 'sveltekit-superforms';
-	import SuperDebug from 'sveltekit-superforms';
+	import { onMount } from 'svelte';
+	import { gsap } from 'gsap';
+	import { Draggable } from 'gsap/Draggable';
 
-	let { data } = $props();
+	gsap.registerPlugin(Draggable);
 
-	// Client API:
-	const { form, errors, constraints, message, enhance } = superForm(data.form);
+	let itemsList = $state([
+		{ name: 'Red', color: 'red', textColor: 'white', highlighted: false },
+		{ name: 'Blue', color: 'blue', textColor: 'white', highlighted: false },
+		{ name: 'Green', color: 'green', textColor: 'white', highlighted: false },
+		{ name: 'Purple', color: 'purple', textColor: 'white', highlighted: false },
+		{ name: 'Yellow', color: 'yellow', textColor: 'black', highlighted: false },
+		{ name: 'Orange', color: 'orange', textColor: 'black', highlighted: false },
+		{ name: 'Aqua', color: 'aqua', textColor: 'black', highlighted: false }
+	]);
+
+	let bucketColor = 'bisque';
+	let container: HTMLDivElement;
+	let bucket: HTMLDivElement;
+
+	onMount(() => {
+		const items = Array.from(container.querySelectorAll('.item')) as HTMLDivElement[];
+
+		Draggable.create(items, {
+			bounds: container,
+			onDrag: function () {
+				const overBucket = this.hitTest(bucket, '5%');
+				if (overBucket) {
+					itemsList[items.indexOf(this.target)].highlighted = true;
+				} else {
+					itemsList[items.indexOf(this.target)].highlighted = false;
+				}
+			},
+			onDragEnd: function () {
+				itemsList[items.indexOf(this.target)].highlighted = false;
+
+				const overBucket = this.hitTest(bucket, '5%');
+				if (overBucket) {
+					const index = items.indexOf(this.target);
+					const droppedColor = itemsList[index].color;
+
+					gsap.to(bucket, {
+						backgroundColor: droppedColor,
+						duration: 0.3,
+						ease: 'power1.out'
+					});
+
+					gsap.fromTo(bucket, { scale: 1 }, { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 });
+				}
+
+				gsap.to(this.target, {
+					x: 0,
+					y: 0,
+					duration: 1,
+					ease: 'elastic.out(1, 0.75)'
+				});
+			}
+		});
+	});
 </script>
 
-<SuperDebug data={$form} />
+<h2>Color Drop Test</h2>
 
-{#if $message}<h3>{$message}</h3>{/if}
-
-<form method="POST" use:enhance>
-	<label for="name">Name</label>
-	<input
-		type="text"
-		name="name"
-		aria-invalid={$errors.name ? 'true' : undefined}
-		bind:value={$form.name}
-		{...$constraints.name}
-	/>
-	{#if $errors.name}<span class="invalid">{$errors.name}</span>{/if}
-
-	<label for="hp">HP</label>
-	<input
-		type="number"
-		name="hp"
-		aria-invalid={$errors.hp ? 'true' : undefined}
-		bind:value={$form.hp}
-		{...$constraints.hp}
-	/>
-	{#if $errors.hp}<span class="invalid">{$errors.hp}</span>{/if}
-
-	<label for="ac">AC</label>
-	<input
-		type="number"
-		name="ac"
-		aria-invalid={$errors.ac ? 'true' : undefined}
-		bind:value={$form.ac}
-		{...$constraints.ac}
-	/>
-	{#if $errors.ac}<span class="invalid">{$errors.ac}</span>{/if}
-
-	<label for="level">Level</label>
-	<input
-		type="number"
-		name="level"
-		aria-invalid={$errors.level ? 'true' : undefined}
-		bind:value={$form.level}
-		{...$constraints.level}
-	/>
-	{#if $errors.level}<span class="invalid">{$errors.level}</span>{/if}
-
-	<label for="class">Class</label>
-	<select
-		aria-invalid={$errors.class ? 'true' : undefined}
-		bind:value={$form.class}
-		{...$constraints.class}
-		name="class"
-		id="class"
-	>
-		<option selected value="">Select...</option>
-		<option value="Wizard">Wizard</option>
-		<option value="Fighter">Fighter</option>
-		<option value="Barbarian">Barbarian</option>
-		<option value="Bard">Bard</option>
-		<option value="Druid">Druid</option>
-		<option value="Cleric">Cleric</option>
-		<option value="Paladin">Paladin</option>
-		<option value="Monk">Monk</option>
-		<option value="Ranger">Ranger</option>
-		<option value="Rogue">Rogue</option>
-		<option value="Warlock">Warlock</option>
-		<option value="Sorcerer">Sorcerer</option>
-	</select>
-	{#if $errors.class}<span class="invalid">{$errors.class}</span>{/if}
-
-	<div><button>Submit</button></div>
-</form>
+<div class="container" bind:this={container}>
+	<div class="items">
+		{#each itemsList as item}
+			<div
+				class:highlight={item.highlighted}
+				class="item"
+				style="background-color: {item.color}; color:{item.textColor}"
+			>
+				{item.name}
+			</div>
+		{/each}
+	</div>
+	<div class="bucket" bind:this={bucket} style="background-color: {bucketColor};">
+		Drop A Color Here!
+	</div>
+</div>
 
 <style>
-	.invalid {
-		color: red;
-	}
-	form {
+	.container {
 		display: flex;
-		flex-direction: column;
+		align-items: flex-start;
+		padding: 2rem;
+		flex-wrap: wrap;
+		height: 80vh;
+	}
+
+	.items {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.item {
+		width: 100px;
+		height: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #fff;
+		font-weight: bold;
+		border-radius: 1rem;
+		cursor: grab;
+		position: relative;
+		z-index: 1;
+		font-size: 1.2rem;
+	}
+
+	.highlight {
+		outline: 5px solid #000;
+	}
+
+	.bucket {
 		width: 300px;
-		margin: 40px auto;
-	}
-	button {
-		margin-top: 1rem;
-		float: right;
-		transition: 0.4s;
-	}
-	button:hover {
-		cursor: pointer;
+		height: 300px;
+		border: 5px solid black;
+		border-radius: 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		align-self: flex-end;
+		font-size: 1.5rem;
+		font-weight: bold;
+		padding: 1rem;
+		text-align: center;
 	}
 </style>

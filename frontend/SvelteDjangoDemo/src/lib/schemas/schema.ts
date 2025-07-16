@@ -13,3 +13,9 @@ export const user = z.object({
 	// and contains at least 1 number, 1 uppercase letter, and one of the
 	// specified special characters [!#$%&?].
 });
+
+export const character = z.object({
+	name: z.string(),
+	hp: z.number(),
+	ac: z.number()
+});

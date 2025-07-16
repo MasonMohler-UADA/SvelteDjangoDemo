@@ -1,14 +1,15 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import AddCharacter from '$lib/components/Character/AddCharacter/AddCharacter.svelte';
 	import Character from '$lib/components/Character/Character.svelte';
+	import CombatQueue from '$lib/components/CombatQueue/CombatQueue.svelte';
 	import { fade } from 'svelte/transition';
 
 	let { data, form } = $props();
 
 	let characters = $derived(data.pageData);
 
-	let selectedIDs = $state([]);
+	let selectedIDs: number[] = $state([]);
 </script>
 
 <form action="?/create" use:enhance method="POST">
@@ -27,14 +28,7 @@
 			<div>
 				<label>
 					<input name="character_ids" type="checkbox" hidden value={id} bind:group={selectedIDs} />
-					<Character
-						{id}
-						{name}
-						currentHP={current_HP}
-						maxHP={max_HP}
-						{ac}
-						isSelected={selectedIDs.includes(id)}
-					/>
+					<Character {id} {name} {current_HP} {max_HP} {ac} isSelected={selectedIDs.includes(id)} />
 				</label>
 				<label>Enter Initiative: <input type="text" name="initiative-{id}" /></label>
 			</div>
@@ -57,6 +51,8 @@
 		<button transition:fade class="delete">Delete Selected Characters</button>
 	</form>{/if}
 <AddCharacter />
+
+<CombatQueue {characters} {selectedIDs} />
 
 <style>
 	form {

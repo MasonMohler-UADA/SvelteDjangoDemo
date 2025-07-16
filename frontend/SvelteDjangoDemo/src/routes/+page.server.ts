@@ -1,3 +1,4 @@
+import type { Character } from '$lib/types/types';
 import type { EZPOSTRequest } from '$lib/utils/POST';
 import { error, fail, redirect } from '@sveltejs/kit';
 
@@ -16,7 +17,7 @@ export const load = async ({ cookies }) => {
 		headers
 	});
 
-	const pageData = await res.json();
+	const pageData: Character[] = await res.json();
 	return { pageData };
 };
 

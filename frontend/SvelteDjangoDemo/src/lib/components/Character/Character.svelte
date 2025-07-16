@@ -1,11 +1,13 @@
-<script>
-	let { id, name, currentHP, maxHP, ac, isSelected = false } = $props();
+<script lang="ts">
+	import type { CharacterProps } from './types';
+
+	let { id, name, current_HP, max_HP, ac, isSelected = false }: CharacterProps = $props();
 </script>
 
 <div class="characterCard" class:selected={isSelected}>
 	<input hidden name="id" type="number" value={id} />
 	<h2>{name}</h2>
-	<p><strong>HP:</strong> {currentHP} / {maxHP}</p>
+	<p><strong>HP:</strong> {current_HP} / {max_HP}</p>
 	<p><strong>AC:</strong> {ac}</p>
 </div>
 
