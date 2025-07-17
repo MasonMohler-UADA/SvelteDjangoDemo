@@ -11,16 +11,7 @@
 		let matchingCharacters = filterMatchingObjects(selectedIDs, characters);
 		return matchingCharacters;
 	});
-
-	let myElement: HTMLAnchorElement | undefined;
 </script>
-
-<a bind:this={myElement} href="url.com">Click Me!</a>
-<button
-	onclick={() => {
-		console.log(myElement);
-	}}>Log Element</button
->
 
 <h2>Currently Selected:</h2>
 {#if selectedCharacters.length > 0}
