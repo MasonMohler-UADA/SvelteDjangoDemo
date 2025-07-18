@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import AddCharacter from '$lib/components/Character/AddCharacter/AddCharacter.svelte';
 	import Character from '$lib/components/Character/Character.svelte';
+	import CharacterCard from '$lib/components/CharacterCard/CharacterCard.svelte';
 	import CombatQueue from '$lib/components/CombatQueue/CombatQueue.svelte';
 	import { fade } from 'svelte/transition';
 
@@ -12,6 +13,17 @@
 	let selectedIDs: number[] = $state([]);
 </script>
 
+<h2>Characters</h2>
+<div class="characterContainer">
+	{#each characters as { id, name, current_HP, max_HP, ac, character_class, level }}
+		<div class="character">
+			<CharacterCard {id} {name} {current_HP} {max_HP} {ac} {character_class} {level} />
+		</div>
+	{/each}
+	<div class="addCharacter"><AddCharacter /></div>
+</div>
+
+<!-- 
 <form action="?/create" use:enhance method="POST">
 	{#if form?.noneSelected}<p style:color="red" class="error">
 			Please select at least one character
@@ -52,10 +64,49 @@
 	</form>{/if}
 <AddCharacter />
 
-<CombatQueue {characters} {selectedIDs} />
+<CombatQueue {characters} {selectedIDs} /> -->
 
 <style>
-	form {
+	.character:first-child {
+		margin-top: 1.4rem;
+	}
+	.characterContainer {
+		width: 450px;
+		background-color: #e0e0e0;
+		border-radius: 1rem;
+		display: flex;
+		flex-direction: column;
+		height: 600px;
+		align-items: center;
+		gap: 1rem;
+		overflow-y: scroll;
+		overflow-x: hidden;
+	}
+	h2 {
+		font-size: 2.6rem;
+		margin: 0;
+		margin-bottom: 1rem;
+	}
+	.addCharacter {
+		position: sticky;
+		bottom: 0;
+		z-index: 100000;
+	}
+	/* Hide scrollbar for Chrome, Safari, and Opera */
+	.characterContainer::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Hide scrollbar for Firefox */
+	.characterContainer {
+		scrollbar-width: none; /* Firefox */
+	}
+
+	/* Hide scrollbar for Internet Explorer and Edge */
+	.characterContainer {
+		-ms-overflow-style: none; /* IE and Edge */
+	}
+	/* form {
 		max-width: 100%;
 		margin-top: 2rem;
 	}
@@ -78,5 +129,5 @@
 	button:hover {
 		cursor: pointer;
 		background-color: rgb(120, 30, 30);
-	}
+	} */
 </style>

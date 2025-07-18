@@ -70,7 +70,7 @@ export const actions = {
 		const headers = new Headers();
 		headers.set('Authorization', `Token ${cookies.get('token')}`);
 
-		const res = await fetch('http://127.0.0.1:8000/characters/delete', {
+		const res = await fetch(`http://127.0.0.1:8000/characters/${data.get('id')}/`, {
 			method: 'DELETE',
 			body: data,
 			headers

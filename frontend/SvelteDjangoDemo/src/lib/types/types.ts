@@ -4,6 +4,8 @@ export type Character = {
 	current_HP: number;
 	max_HP: number;
 	ac: number;
+	character_class: string;
+	level: number;
 	player: boolean;
 	init: number | null;
 	combat_session: number;

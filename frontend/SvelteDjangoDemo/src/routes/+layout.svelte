@@ -1,6 +1,7 @@
 <script>
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
+	import Header from '$lib/components/Header/Header.svelte';
 	import MainNav from '$lib/components/MainNav/MainNav.svelte';
 	import SimpleSideNav from '$lib/components/SimpleSideNav/SimpleSideNav.svelte';
 	import '$lib/static/css/modern-normalize.css';
@@ -18,7 +19,7 @@
 	<SimpleSideNav {sideNavItems} pagePathname={page.url.pathname} />
 {/if} -->
 {#if data.loggedIn}
-	<MainNav {username} />
+	<Header {username} />
 {/if}
 <main>
 	{@render children()}

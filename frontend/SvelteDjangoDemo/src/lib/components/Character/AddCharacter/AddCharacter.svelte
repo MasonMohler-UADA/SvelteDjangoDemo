@@ -26,7 +26,7 @@
 			transition:slide={{ easing: cubicOut, duration: 300 }}
 			class="formOpener"
 			type="button"
-			onclick={toggleForm}>+ character</button
+			onclick={toggleForm}>+</button
 		>
 	{/if}
 	{#if showForm}
@@ -46,20 +46,30 @@
 			}}
 			action="?/createCharacter"
 		>
-			<label>
-				Name:
-				<input placeholder="e.g. Mason" name="name" type="text" />
-			</label>
-			<label>
-				HP:
-				<input bind:value={hp} placeholder="e.g. 18" name="current_HP" type="number" />
-			</label>
-			<input hidden name="max_HP" value={hp} type="number" />
-			<label>
-				AC:
-				<input placeholder="e.g. 14" name="ac" type="number" />
-			</label>
-			<button class="formButton" onclick={toggleForm} type="submit">Add Character</button>
+			<fieldset>
+				<label>
+					Name:
+					<input placeholder="e.g. Mason" name="name" type="text" />
+				</label>
+				<label>
+					HP:
+					<input bind:value={hp} placeholder="e.g. 18" name="current_HP" type="number" />
+				</label>
+				<input hidden name="max_HP" value={hp} type="number" />
+				<label>
+					AC:
+					<input placeholder="e.g. 14" name="ac" type="number" />
+				</label>
+				<label>
+					Class:
+					<input placeholder="e.g. Wizard" name="character_class" type="text" />
+				</label>
+				<label>
+					Level:
+					<input placeholder="e.g. 5" name="level" type="number" />
+				</label>
+				<button class="formButton" onclick={toggleForm} type="submit">Add Character</button>
+			</fieldset>
 		</form>
 	{/if}
 </div>
@@ -72,16 +82,27 @@
 		border: none;
 		border-radius: 1rem;
 		padding: 2rem;
-		background-color: #fff;
+		background-color: #e0e0e0;
 		z-index: 1000;
-		box-shadow: 0 0 1rem #c6c6c6;
-		width: 300px;
+		width: 450px;
+		height: 600px;
 	}
-	input {
-		padding: 0.5rem;
+	fieldset {
 		border: none;
 		background-color: #fff;
-		border-radius: 0.5rem;
+		box-shadow: 0 0 1rem #c6c6c6;
+		border-radius: 1rem;
+		padding: 2rem;
+		height: 550px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+	input {
+		padding: 0.75rem;
+		border: none;
+		background-color: #fff;
+		border-radius: 1rem;
 		border: 3px solid #c6c6c6;
 		transition: 0.3s;
 		font-size: 1rem;
@@ -105,20 +126,21 @@
 	}
 	label {
 		display: block;
-		font-size: 1.2rem;
+		font-size: 1.5rem;
 		display: flex;
 		gap: 1.2rem;
 		align-items: center;
 	}
 	button {
 		border: none;
-		padding: 1rem;
 		background-color: brown;
 		color: #fff;
 		border-radius: 1rem;
 		font-family: 'Courier New', Courier, monospace;
-		font-size: 1.6rem;
+		font-size: 6rem;
 		transition: 0.4s;
+		width: 450px;
+		border-radius: 2rem;
 	}
 	button:hover {
 		cursor: pointer;
