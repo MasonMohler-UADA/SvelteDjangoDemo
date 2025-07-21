@@ -19,6 +19,17 @@ from api.models import Character, CombatSession
 from knox.views import LoginView as KnoxLoginView
 from rest_framework.authentication import BasicAuthentication
 
+def cleanup_orphaned_sessions(user):
+    # Get active session IDs from the user's characters
+    active_session_ids = Character.objects.filter(owner=user, combat_session__isnull=False).values_list('combat_session_id', flat=True)
+
+    # Get all user's sessions
+    all_sessions = CombatSession.objects.filter(owner=user)
+
+    # Delete any that aren't used
+    unused_sessions = all_sessions.exclude(id__in=active_session_ids)
+    unused_sessions.delete()
+
 class LoginView(KnoxLoginView):
     authentication_classes = [TokenAuthentication]
     serializer_class = LoginSerializer
@@ -74,15 +85,16 @@ class CharacterViewSet(ModelViewSet):
         print(self.get_object().name)
         return Response(serializer.data)
 
+    def partial_update(self, request, *args, **kwargs):
+        response = super().partial_update(request, *args, **kwargs)
+        cleanup_orphaned_sessions(request.user)
+        return response
+
     def destroy(self, request, *args, **kwargs):
-        # Expects a list of IDs in the request body (e.g., {'ids': [1, 2, 3]})
-        ids_to_delete = request.data.getlist('character_ids', [])
-        if not ids_to_delete:
-            return Response({'detail': 'No IDs provided for deletion.'})
-        queryset = self.get_queryset().filter(id__in=ids_to_delete)
-        print(queryset)
-        deleted_count, _ = queryset.delete()
-        return Response({f'{deleted_count} objects deleted successfully.'})
+        response = super().destroy(request, *args, **kwargs)
+        cleanup_orphaned_sessions(request.user)
+        return response
+
 
 class CombatSessionViewSet(ModelViewSet):
     serializer_class = CombatSessionSerializer
@@ -93,6 +105,7 @@ class CombatSessionViewSet(ModelViewSet):
         user = self.request.user
         print(self.request.user)
         print(CombatSession.objects.filter(owner=user.id).all())
+        all_sessions = CombatSession.objects.filter(owner=user.id).all()
         return CombatSession.objects.filter(owner=user.id).all()
 
     # GET /combat_sessions/

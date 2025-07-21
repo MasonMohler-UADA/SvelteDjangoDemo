@@ -8,6 +8,8 @@ class Character(models.Model):
     current_HP = models.IntegerField(blank=False, null=False)
     max_HP = models.IntegerField(blank=False, null=False)
     ac = models.IntegerField(blank=False, null=False)
+    character_class = models.CharField(max_length=50, blank=False, null=False)
+    level = models.IntegerField(blank=False, null=False)
     player = models.BooleanField(default=False, blank=False, null=False)
     init = models.IntegerField(blank=True, null=True)
     combat_session = models.ForeignKey('CombatSession', on_delete=models.SET_NULL, blank=True, null=True)

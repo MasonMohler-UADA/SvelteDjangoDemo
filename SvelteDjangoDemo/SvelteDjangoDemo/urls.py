@@ -35,9 +35,6 @@ characters_detail = CharacterViewSet.as_view({
     'get':'retrieve',
     'put':'update',
     'patch':'partial_update',
-})
-
-characters_delete = CharacterViewSet.as_view({
     'delete':'destroy'
 })
 
@@ -49,6 +46,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('characters/', characters_list),
     path('characters/<int:pk>/', characters_detail),
-    path('characters/delete', characters_delete),
     path('users/username-check/', UsernameCheckView.as_view(), name='username_check' ),
 ]
