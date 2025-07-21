@@ -10,9 +10,10 @@
 
 <style>
 	div {
+		margin: auto;
 		display: flex;
-		flex-direction: column;
-		justify-self: center;
-		width: 300px;
+		height: 100vh;
+		justify-content: center;
+		padding-top: 4rem;
 	}
 </style>

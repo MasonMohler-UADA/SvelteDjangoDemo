@@ -7,12 +7,19 @@
 		<h1>Combat Tracker V1</h1>
 		<div class="userActions">
 			<h4>{username}</h4>
-			<a data-sveltekit-preload-data="off" href="/accounts/logout">Logout</a>
+			<a class="home" href="/">Home</a>
+			<a class="logout" data-sveltekit-preload-data="off" href="/accounts/logout">Logout</a>
 		</div>
 	</div>
 </header>
 
 <style>
+	.logout:hover {
+		color: red;
+	}
+	.home {
+		font-weight: bold;
+	}
 	header {
 		width: 100%;
 		height: 120px;

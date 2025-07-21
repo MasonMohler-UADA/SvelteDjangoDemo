@@ -8,4 +8,16 @@
 	let { data } = $props();
 </script>
 
-<LoginForm {data} />
+<div class="container">
+	<LoginForm {data} />
+</div>
+
+<style>
+	.container {
+		margin: auto;
+		display: flex;
+		height: 100vh;
+		justify-content: center;
+		padding-top: 4rem;
+	}
+</style>

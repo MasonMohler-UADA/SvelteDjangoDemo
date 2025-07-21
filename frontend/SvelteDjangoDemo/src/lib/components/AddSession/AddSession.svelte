@@ -1,18 +1,25 @@
-<script>
+<script lang="ts">
 	// import { addToast } from '$lib/components/Toast/state.svelte';
 	import { enhance } from '$app/forms';
 	import { fade, fly, slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
+	import CharacterItem from '../CharacterItem/CharacterItem.svelte';
+
+	let { characters, form } = $props();
 
 	let showForm = $state(false);
-	let hp = $state();
+	let selectedIDs: number[] = $state([]);
 
 	function toggleForm() {
 		showForm = !showForm;
 	}
 
 	function handleClickOutside(event) {
-		if (!event.target.closest('.formOpener') && !event.target.closest('.addForm')) {
+		if (
+			!event.target.closest('.formOpener') &&
+			!event.target.closest('.addForm') &&
+			!event.target.closest('.optionsContainer')
+		) {
 			showForm = false;
 		}
 	}
@@ -44,34 +51,49 @@
 				// 	}
 				// };
 			}}
-			action="?/createCharacter"
+			action="?/createSession"
 		>
+			{#if form?.noneSelected}<p style:color="red" class="error">
+					Please select at least one character
+				</p>{/if}
+			{#if form?.missingInitiative}<p style:color="red" class="error">
+					Selected characters must have an initiative.
+				</p>{/if}
+			{#if form?.noName}
+				<p style:color="red" class="error">Please enter a session name</p>
+			{/if}
 			<fieldset>
 				<div class="firstField">
 					<button type="button" onclick={toggleForm} class="x-out">✖</button>
 					<label class="nameLabel">
 						Name:
-						<input class="nameField" placeholder="e.g. Mason" name="name" type="text" />
+						<input
+							class="nameField"
+							placeholder="e.g. Session 1"
+							required
+							name="name"
+							id="name"
+							type="text"
+						/>
 					</label>
 				</div>
-				<label>
-					HP:
-					<input bind:value={hp} placeholder="e.g. 18" name="current_HP" type="number" />
-				</label>
-				<input hidden name="max_HP" value={hp} type="number" />
-				<label>
-					AC:
-					<input placeholder="e.g. 14" name="ac" type="number" />
-				</label>
-				<label>
-					Class:
-					<input placeholder="e.g. Wizard" name="character_class" type="text" />
-				</label>
-				<label>
-					Level:
-					<input placeholder="e.g. 5" name="level" type="number" />
-				</label>
-				<button class="formButton" onclick={toggleForm} type="submit">Add Character</button>
+
+				<label class="characterLabel" for="characterSelect">Characters:</label>
+				<div class="optionContainer">
+					{#each characters as { id, name }}
+						<label class="option">
+							<input
+								name="character_ids"
+								type="checkbox"
+								hidden
+								value={id}
+								bind:group={selectedIDs}
+							/>
+							<CharacterItem {id} {name} isSelected={selectedIDs.includes(id)} />
+						</label>
+					{/each}
+				</div>
+				<button class="formButton" onclick={toggleForm} type="submit">Start Combat</button>
 			</fieldset>
 		</form>
 	{/if}
@@ -85,6 +107,25 @@
 		padding: 0.5rem;
 		float: right;
 		transform: translate(3rem, -3rem);
+	}
+	.nameField {
+		width: 226px;
+	}
+	.option {
+		border-bottom: 2px solid #c6c6c6;
+	}
+	.option:last-child {
+		border-bottom: none;
+	}
+	.characterLabel {
+		margin-top: 1rem;
+	}
+	.optionContainer {
+		border: 3px solid #c6c6c6;
+		border-radius: 1rem;
+		height: 316px;
+		overflow-y: scroll;
+		overflow-x: hidden;
 	}
 	form {
 		display: flex;
@@ -107,7 +148,7 @@
 		height: 550px;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
+		justify-content: space-around;
 	}
 	input {
 		padding: 0.75rem;
@@ -135,9 +176,6 @@
 		-webkit-appearance: none;
 		margin: 0;
 	}
-	.nameField {
-		width: 226px;
-	}
 	label {
 		display: block;
 		font-size: 1.5rem;
@@ -163,7 +201,22 @@
 		width: 100%;
 		font-size: 1.2rem;
 		margin: 0;
+		margin-top: 1rem;
 		padding: 0.75rem;
 		border-radius: 0.5rem;
+	}
+	/* Hide scrollbar for Chrome, Safari, and Opera */
+	.optionContainer::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Hide scrollbar for Firefox */
+	.optionContainer {
+		scrollbar-width: none; /* Firefox */
+	}
+
+	/* Hide scrollbar for Internet Explorer and Edge */
+	.optionContainer {
+		-ms-overflow-style: none; /* IE and Edge */
 	}
 </style>

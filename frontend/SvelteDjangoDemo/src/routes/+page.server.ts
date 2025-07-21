@@ -12,17 +12,23 @@ export const load = async ({ cookies }) => {
 	const headers = new Headers();
 	headers.set('Authorization', `Token ${cookies.get('token')}`);
 
-	const res = await fetch('http://127.0.0.1:8000/characters/', {
+	const characterRes = await fetch('http://127.0.0.1:8000/characters/', {
 		method: 'GET',
 		headers
 	});
 
-	const pageData: Character[] = await res.json();
-	return { pageData };
+	const sessionRes = await fetch('http://127.0.0.1:8000/combat_sessions/', {
+		method: 'GET',
+		headers
+	});
+
+	const characterData: Character[] = await characterRes.json();
+	const sessionData = await sessionRes.json();
+	return { characterData, sessionData };
 };
 
 export const actions = {
-	create: async ({ url, request, cookies }) => {
+	createSession: async ({ url, request, cookies }) => {
 		const data = await request.formData();
 		const character_ids = data.getAll('character_ids');
 		const sessionName = data.get('name');
@@ -65,7 +71,18 @@ export const actions = {
 		const resJSON = await res.json();
 		redirect(307, `/combat-session/${resJSON.id}`);
 	},
-	delete: async ({ request, cookies }) => {
+	deleteSession: async ({ url, request, params, cookies }) => {
+		const data = await request.formData();
+		const sessionID = data.get('sessionID');
+		const headers = new Headers();
+		headers.set('Authorization', `Token ${cookies.get('token')}`);
+
+		const res = await fetch(`http://127.0.0.1:8000/combat_sessions/${sessionID}/`, {
+			method: 'DELETE',
+			headers
+		});
+	},
+	deleteCharacter: async ({ request, cookies }) => {
 		const data = await request.formData();
 		const headers = new Headers();
 		headers.set('Authorization', `Token ${cookies.get('token')}`);
@@ -88,6 +105,29 @@ export const actions = {
 		const res = await fetch('http://127.0.0.1:8000/characters/', {
 			method: 'POST',
 			body: JSONdata,
+			headers
+		});
+	},
+	editCharacter: async ({ url, request, params, cookies }) => {
+		const data = await request.formData();
+		console.log(data);
+		const headers = new Headers();
+		headers.set('Authorization', `Token ${cookies.get('token')}`);
+		headers.set('Content-Type', 'application/json');
+
+		const characterID = data.get('id');
+		const current_HP = Number(data.get('current_HP'));
+		const max_HP = Number(data.get('max_HP'));
+		const ac = Number(data.get('ac'));
+		const level = Number(data.get('level'));
+		const character_class = String(data.get('character_class'));
+		console.log(`Raw: ${data.get('max_HP')}, Parsed: ${max_HP}`);
+
+		const reqBody = { current_HP, max_HP, ac, level, character_class };
+
+		const res = await fetch(`http://127.0.0.1:8000/characters/${characterID}/`, {
+			method: 'PATCH',
+			body: JSON.stringify(reqBody),
 			headers
 		});
 	}
